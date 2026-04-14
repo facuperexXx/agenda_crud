@@ -10,3 +10,6 @@ class Contacto(Base):
     direccion = Column(String)
     email = Column(String)
     telefono = Column(String)
+
+    def to_dict(self):
+        return {"id" : self.id, "nombre" : self.nombre, "apellido" : self.apellido, "direccion" : self.direccion, "email" : self.email, "telefono" : self.telefono}

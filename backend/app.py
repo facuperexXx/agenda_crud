@@ -1,36 +1,67 @@
-from database import init_db, engine
+from flask import Flask
+from config import get_db
+from models import ContactoSchema, Contacto, APIResponse
 
-from sqlalchemy import inspect
+def probar_db():
+    data_externa = {
+        "nombre" : "Mambo",
+        "apellido" : "Perez",
+        "direccion" : "Franklin",
+        "email" : "mambito@gmail.com",
+        "telefono" : "444-222"
+    }
 
-init_db()
+    schema = ContactoSchema()
 
-inspector = inspect(engine)
+    try:
+        resultado = schema.load(data_externa)
+        print(resultado)
+        print(type(resultado))
 
-tablas = inspector.get_table_names()
+        jason = schema.dump(resultado)
+        print(jason)
 
-if "contactos" in tablas:
-    print("La tabla existe.")
-else:
-    print("No hay tabla.")
+        db.add(resultado)
+        db.commit()
 
-from models import ContactoSchema
+    except Exception as e:
+        print(e.messages)
 
-data_externa = {
-    "nombre" : "Mambo",
-    "apellido" : "Perez",
-    "direccion" : "Franklin",
-    "email" : "mambito@gmail.com",
-    "telefono" : "444-222"
-}
+app = Flask(__name__)
 
-schema = ContactoSchema()
+@app.route('/')
+def home():
+    probar_db()
+    return "API en funcionamiento"
 
-try:
-    resultado = schema.load(data_externa)
-    print(type(resultado))
+@app.route('/contactos')
+def all_contactos():
+    try:
+        schema = ContactoSchema()
 
-    jason = schema.dump(resultado)
-    print(jason)
+        # Variables de respuesta
+        lista_final = []
+        count = 0
+        message = "Peticion ejecutada"
 
-except Exception as e:
-     print(e.messages)
+        # Obtener los registros de la base de datos
+        registros = db.query(Contacto).all()
+
+        # Recopilando registros
+        for r in registros:
+
+            # Convierte los registros sacados de la consulta en una lista de diccionarios
+            lista_final.append(schema.dump(r))
+            count += 1
+
+        # Generando respuesta
+        respuesta = APIResponse(True, lista_final, count, message)
+
+        return respuesta.to_json()
+    
+    except:
+        return APIResponse(False, [], 0, "Peticion rechazada").to_json()
+
+if __name__ == '__main__':
+    db = get_db()
+    app.run(debug=True, port=8040)
