@@ -83,13 +83,18 @@ def buscarXid(id):
 
             count = len(lista_final)
 
+        else:
+            # en caso de no encontrar registro
+            message = "Registro no encontrado"
+
         # generacion de la respuesta
         respuesta = APIResponse(True, lista_final, count, message)
-
         return respuesta.to_json()
-    
+
     except:
         return APIResponse(False, [], 0, "Peticion rechazada").to_json()
+
+
 
 # ejecucion de API
 if __name__ == '__main__':
