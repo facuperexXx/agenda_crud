@@ -27,6 +27,12 @@ def probar_db():
     except Exception as e:
         print(e.messages)
 
+def buscar_registro(id_buscado):
+        # ejecucion de consulta
+        registro_buscado = db.query(Contacto).filter_by(id = id_buscado).first()
+
+        return registro_buscado
+
 app = Flask(__name__)
 
 @app.route('/')
@@ -65,7 +71,7 @@ def all_contactos():
 
 # endpoint - buscar registro con id
 @app.route('/buscar/<int:id>')
-def buscarXid(id):
+def buscar_por_id(id):
     try:
         schema = ContactoSchema()
         id_buscado = id
@@ -75,8 +81,7 @@ def buscarXid(id):
         count = 0
         message = "Peticion ejecutada"
 
-        # ejecucion de consulta
-        registro_buscado = db.get(Contacto, id_buscado)
+        registro_buscado = buscar_registro(id_buscado)
 
         if registro_buscado:
             lista_final.append(schema.dump(registro_buscado))
@@ -94,7 +99,32 @@ def buscarXid(id):
     except:
         return APIResponse(False, [], 0, "Peticion rechazada").to_json()
 
+@app.route('/eliminar/<int:id>')
+def eliminar_por_id(id):
+    try:
+        schema = ContactoSchema()
+        id_buscado = id
 
+        # Variables de respuesta
+        lista_final = []
+        count = 0
+        message = "Peticion ejecutada"
+
+        # busqueda y eliminacion del registro
+        if buscar_registro(id):
+            registro_a_eliminar = buscar_registro(id)
+            db.delete(registro_a_eliminar)
+            db.commit()
+        
+        else:
+            message = f"Registro {id_buscado} no encontrado"
+
+        # generacion de la respuesta
+        respuesta = APIResponse(True, lista_final, count, message)
+        return respuesta.to_json()
+
+    except:
+        return APIResponse(False, [], 0, "Peticion rechazada").to_json()
 
 # ejecucion de API
 if __name__ == '__main__':
