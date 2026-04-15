@@ -99,10 +99,9 @@ def buscar_por_id(id):
     except:
         return APIResponse(False, [], 0, "Peticion rechazada").to_json()
 
-@app.route('/eliminar/<int:id>')
+@app.route('/eliminar/<int:id>', methods=['DELETE'])
 def eliminar_por_id(id):
     try:
-        schema = ContactoSchema()
         id_buscado = id
 
         # Variables de respuesta
