@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, request
 from config import get_db
 from models import ContactoSchema, Contacto, APIResponse
 
@@ -116,12 +116,53 @@ def eliminar_por_id(id):
             db.commit()
         
         else:
+            # en caso de no haber registro por eliminar
             message = f"Registro {id_buscado} no encontrado"
 
         # generacion de la respuesta
         respuesta = APIResponse(True, lista_final, count, message)
         return respuesta.to_json()
 
+    except:
+        return APIResponse(False, [], 0, "Peticion rechazada").to_json()
+    
+@app.route('/nuevo', methods=['POST'])   
+def crear_registro():
+    try:
+        schema = ContactoSchema()
+
+        # Variables de respuesta
+        lista_final = []
+        count = 0
+        message = "Peticion ejecutada"
+
+        # obtencion de datos recibidos
+        datos = request.get_json()
+
+        # vericacion y creacion de registro
+        nuevo_registro = schema.load(datos)
+
+        # guardado en base de datos
+        db.add(nuevo_registro)
+        db.commit()
+
+        # verificacion de registro guardado 
+        id_registro = nuevo_registro.id
+
+        if id_registro:    
+            registro = buscar_registro(id_registro)
+
+            lista_final.append(schema.dump(registro))
+            count = len(lista_final)
+
+            # informo id del registro cargado
+            message += f" - Registro {id_registro}"
+
+        # generacion de respuesta
+        respuesta = APIResponse(True, lista_final, count, message)
+
+        return respuesta.to_json()
+    
     except:
         return APIResponse(False, [], 0, "Peticion rechazada").to_json()
 
