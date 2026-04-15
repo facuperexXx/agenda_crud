@@ -2,31 +2,6 @@ from flask import Flask, request
 from config import get_db
 from models import ContactoSchema, Contacto, APIResponse
 
-def probar_db():
-    data_externa = {
-        "nombre" : "Mambo",
-        "apellido" : "Perez",
-        "direccion" : "Franklin",
-        "email" : "mambito@gmail.com",
-        "telefono" : "444-222"
-    }
-
-    schema = ContactoSchema()
-
-    try:
-        resultado = schema.load(data_externa)
-        print(resultado)
-        print(type(resultado))
-
-        jason = schema.dump(resultado)
-        print(jason)
-
-        db.add(resultado)
-        db.commit()
-
-    except Exception as e:
-        print(e.messages)
-
 def buscar_registro(id_buscado):
         # ejecucion de consulta
         registro_buscado = db.query(Contacto).filter_by(id = id_buscado).first()
