@@ -34,6 +34,7 @@ def home():
     probar_db()
     return "API en funcionamiento"
 
+# endpoint - obtener todos los registros
 @app.route('/contactos')
 def all_contactos():
     try:
@@ -62,6 +63,35 @@ def all_contactos():
     except:
         return APIResponse(False, [], 0, "Peticion rechazada").to_json()
 
+# endpoint - buscar registro con id
+@app.route('/buscar/<int:id>')
+def buscarXid(id):
+    try:
+        schema = ContactoSchema()
+        id_buscado = id
+
+        # Variables de respuesta
+        lista_final = []
+        count = 0
+        message = "Peticion ejecutada"
+
+        # ejecucion de consulta
+        registro_buscado = db.get(Contacto, id_buscado)
+
+        if registro_buscado:
+            lista_final.append(schema.dump(registro_buscado))
+
+            count = len(lista_final)
+
+        # generacion de la respuesta
+        respuesta = APIResponse(True, lista_final, count, message)
+
+        return respuesta.to_json()
+    
+    except:
+        return APIResponse(False, [], 0, "Peticion rechazada").to_json()
+
+# ejecucion de API
 if __name__ == '__main__':
     db = get_db()
     app.run(debug=True, port=8040)
