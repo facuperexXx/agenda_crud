@@ -1,4 +1,4 @@
-from database import Base
+from config import Base
 from sqlalchemy import Column, Integer, String
 
 class Contacto(Base):

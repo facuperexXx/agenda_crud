@@ -1,4 +1,4 @@
-from database import init_db, engine, SessionLocal
+from .database import init_db, SessionLocal
 
 def get_db():
     # Se inicializa la base de datos | si no existe, la crea

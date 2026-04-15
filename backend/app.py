@@ -12,7 +12,6 @@ app = Flask(__name__)
 
 @app.route('/')
 def home():
-    probar_db()
     return "API en funcionamiento"
 
 # endpoint - obtener todos los registros
