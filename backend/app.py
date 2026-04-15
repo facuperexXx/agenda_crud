@@ -166,6 +166,29 @@ def crear_registro():
     except:
         return APIResponse(False, [], 0, "Peticion rechazada").to_json()
 
+@app.route('/modificar/<int:id>', methods=['POST'])
+def modificar_registro(id):
+    try:
+        id_buscado = id
+        schema = ContactoSchema()
+        datos_actualizacion = request.get_json()
+
+        # busqueda de registro 
+        registro = buscar_registro(id_buscado)
+
+        # actualizacion de campos del atributo buscado
+        if registro:
+            for key, valor in datos_actualizacion.items():
+                if hasattr(registro, key):  # el registro tiene un atributo con ese nombre ?
+                    setattr(registro, key, valor)   # entonces actualiza el registro con los datos que se envian
+
+            db.commit()     # guardado de cambios
+
+        return buscar_por_id(id_buscado)    # llamado a otro endpoint - funcional pero no recomendable
+
+    except:
+        return APIResponse(False, [], 0, "Peticion rechazada").to_json()
+
 # ejecucion de API
 if __name__ == '__main__':
     db = get_db()
