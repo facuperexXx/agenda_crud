@@ -1,9 +1,11 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
+import os
 
-DATABASE_URL = "sqlite:///agenda.db"
+BASE_DIR = os.path.abspath(os.path.dirname(__file__)) 
+DATABASE_URL = os.path.join(BASE_DIR, "agenda.db")
 
-engine = create_engine(DATABASE_URL)
+engine = create_engine("sqlite:////" + DATABASE_URL)
 
 # Configuración de conexion a la base de datos 
 SessionLocal = sessionmaker(bind=engine)

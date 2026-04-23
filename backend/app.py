@@ -166,4 +166,4 @@ def modificar_registro(id):
 # ejecucion de API
 if __name__ == '__main__':
     db = get_db()
-    app.run(debug=True, port=8040)
+    app.run(host='0.0.0.0', port=5000)
