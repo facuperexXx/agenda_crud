@@ -1,6 +1,7 @@
 from flask import Flask, request
 from config import get_db
 from models import ContactoSchema, Contacto, APIResponse
+from flask_cors import CORS
 
 def buscar_registro(id_buscado):
         # ejecucion de consulta
@@ -9,6 +10,7 @@ def buscar_registro(id_buscado):
         return registro_buscado
 
 app = Flask(__name__)
+CORS(app)
 
 @app.route('/')
 def home():
